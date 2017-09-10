@@ -65,7 +65,7 @@ i_matrix = eye(num_labels);
 y_matrix = i_matrix(y,:);
 % Add a column of ones to the X data matrix to get a1.
 a1 =[ones(m, 1)  X];
-% compute activations for the remaining layers.
+% compute activations for the remaining layers (forward propagation).
 z2 = a1 * Theta1';
 a2 = sigmoid(z2);
 a2 =[ones(m, 1) a2];
@@ -79,7 +79,16 @@ regTerm = (lambda / (2 * m)) * (regTheta1Term + regTheta2Term);
 % compute the cost (scalar).
 J  =(1/m) * sum(sum((-y_matrix .* log(a3)) - ((1-y_matrix) .* log(1-a3)))) + regTerm;
 
-
+% compute the delta terms for back-propagation.
+d3 = a3 - y_matrix;
+d2 = d3 * Theta2(:,2:end) .* sigmoidGradient(z2);
+D1 = d2' * a1;
+D2 = d3' * a2;
+% zero out the bias terms in Theta1 and Theta2.
+Theta1(:,1) = 0;
+Theta2(:,1) = 0;
+Theta1_grad  = (1/m) * D1 + ((lambda / m) * Theta1);
+Theta2_grad  = (1/m) * D2 + ((lambda / m) * Theta2);
 
 
 
