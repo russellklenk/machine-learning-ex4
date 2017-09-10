@@ -61,8 +61,23 @@ Theta2_grad = zeros(size(Theta2));
 %               the regularization separately and then add them to Theta1_grad
 %               and Theta2_grad from Part 2.
 %
-
-
+i_matrix = eye(num_labels);
+y_matrix = i_matrix(y,:);
+% Add a column of ones to the X data matrix to get a1.
+a1 =[ones(m, 1)  X];
+% compute activations for the remaining layers.
+z2 = a1 * Theta1';
+a2 = sigmoid(z2);
+a2 =[ones(m, 1) a2];
+z3 = a2 * Theta2';
+a3 = sigmoid(z3);     % note that a3 is the same as h_theta_x
+% compute the regularization terms for each layer.
+regTheta1Term = sum(sum(Theta1(:,2:end) .^ 2)); % Theta1(:,2:end) removes the column for the bias units
+regTheta2Term = sum(sum(Theta2(:,2:end) .^ 2)); % Theta2(:,2:end) removes the column for the bias units
+% compute the final regularization term (scalar).
+regTerm = (lambda / (2 * m)) * (regTheta1Term + regTheta2Term);
+% compute the cost (scalar).
+J  =(1/m) * sum(sum((-y_matrix .* log(a3)) - ((1-y_matrix) .* log(1-a3)))) + regTerm;
 
 
 
